@@ -1,0 +1,28 @@
+> db.names.find()
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello" }
+> db.names.find()
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello" }
+> var j = db.names.findOne()
+> j
+{
+	"_id" : ObjectId("50885eaeac293e111eeb28b6"),
+	"name" : "Stefano",
+	"surname" : "Paluello"
+}
+> j.name
+Stefano
+> j.Address = "Via San Grato, 4"
+Via San Grato, 4
+> j
+{
+	"_id" : ObjectId("50885eaeac293e111eeb28b6"),
+	"name" : "Stefano",
+	"surname" : "Paluello",
+	"Address" : "Via San Grato, 4"
+}
+> db.names.save()
+Thu Oct 25 14:39:43 uncaught exception: can't save a null
+> db.names.save(j)
+> db.names.find()
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4" }
+
