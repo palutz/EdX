@@ -1,0 +1,108 @@
+
+[HowTo] Install MongoDB + PyMongo + Bottle on Linux (Ubuntu & Fedora/RHEL/CentOS)
+
+Article by @Jmlevick (that's my twitter username!) If you have any problems or questions related, send me a mention and I'll help you ;)
+
+Corrected Article: With this method you ensure no errors will happen with your installation while doing the course's Homeworks!
+
+If you're a Linux user taking the M101 course, you might have seen there are no videos related on How to mount & run your Developing Enviroment for the classes. I'm going to give the community my two cents about the matter in this article:
+Ubuntu (12.04, 12.10 or Major) [32 & 64 Bit]
+Install MongoDB
+
+To install MongoDB on your ubuntu system, issue the following commands in your terminal:
+
+    sudo apt-get purge mongodb mongodb-clients mongodb-server
+
+(this one in case you previously installed it via the official ubuntu repos) Then the next ones:
+
+    sudo su
+    apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+    echo "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" | tee -a /etc/apt/sources.list.d/10gen.list
+    apt-get -y update
+    apt-get -y install mongodb-10gen
+    sudo service mongodb start
+    exit
+
+Then open your Mongo Shell in terminal (to ensure it's functional) with:
+
+    mongo
+
+and close it by pressing Ctrl+C; Then add the mongo service to the system's startup with:
+
+    sudo update-rc.d mongodb defaults
+
+Reboot and reopen the Mongo Shell with the command mongo on your terminal, it should start again... Close it with Ctrl+C and then go to:
+
+    http://localhost:28017/
+
+In your web browser, you should see something like this:
+
+http://bit.ly/Vy6erm (PNG Image)
+
+If that is the case, you've successfully installed MongoDB on your Ubuntu Linux System.
+Install PyMongo & Bottle Framework
+
+To install these two, issue these commands in your terminal:
+
+    sudo apt-get install python python-setuptools
+    sudo apt-get install python-bson python-gridfs python-pymongo
+    sudo apt-get install python-bottle
+
+NOTE: Python should be already installed in your system.
+
+Finally, I recommend using NinjaIDE for your Python coding, it is my favorite IDE out there and it is OpenSource, also cross-platform! Check it out if you want: http://ninja-ide.org/
+Fedora (17, 18 or Major) [32 & 64 Bit]
+Install MongoDB
+
+To install MongoDB on your fedora system, issue the following commands in your terminal:
+
+    su -
+    yum -y remove libmongodb mongodb mongodb-server
+
+(the second in case you previously installed it via the official fedora repos) Then the next ones:
+
+    gedit /etc/yum.repos.d/10gen.repo
+    For 32 Bit, place the following code on that file:
+
+http://gist.github.com/3949816#file_32bit.repo
+
+and for 64 Bit this one:
+
+http://gist.github.com/3949816#file_64bit.repo
+
+Now Run:
+
+    yum install mongo-10gen mongo-10gen-server
+    mongod -f /etc/mongod.conf
+
+Then open your Mongo Shell in terminal (to ensure it's functional) with:
+
+    mongo
+
+and close it by pressing Ctrl+C; Then add the mongo service to the system's startup with:
+
+    chkconfig --levels 235 mongod on
+
+Reboot and reopen the Mongo Shell with the command mongod -f /etc/mongod.conf && mongo on your terminal, it should start again... Close it with Ctrl+C and then go to:
+
+    http://localhost:27017/
+
+In your web browser, you should see something like this:
+
+http://bit.ly/TPucaZ (PNG Image)
+
+If that is the case, you've successfully installed MongoDB on your Fedora Linux System.
+Install PyMongo & Bottle Framework
+
+To install these two, issue these commands in your terminal:
+
+    sudo yum -y install python python-setuptools python-setuptools-devel
+    sudo yum -y install python-bson pymongo pymongo-gridfs
+    sudo yum -y install python-bottle
+
+NOTE: Python should be already installed on your system, but in the case of F17 (& higher) wich ships with python3 by default, the first command will install python 2.7.x for us in the system, wich is the version we need for the course.
+
+Finally, I recommend using NinjaIDE for your Python coding, it is my favorite IDE out there and it is OpenSource, also cross-platform! Check it out if you want: http://ninja-ide.org/
+
+¡Happy Coding! ;D
+
