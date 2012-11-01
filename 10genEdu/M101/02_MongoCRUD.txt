@@ -1,4 +1,12 @@
-Javascript recap
+Which of the following are types available in BSON?
+Strings
+Floating-point numbers
+Arrays
+Objects
+Timestamps
+#
+#Javascript recap
+#
 > x = 1
 1
 > y = "abc"
@@ -15,7 +23,9 @@ abc
 a
 > z[w]
 1
-
+#
+# Find, FindOne
+#
 > db.names.find()
 { "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4" }
 { "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4" }
@@ -34,19 +44,6 @@ a
 { "name" : "Stefano" }
 Use findOne on the collection users to find one document where the key username is "dwight", and retrieve only the key named email.
 db.users.findOne({ username:"dwight"}, {"email":true, "_id":false}
-
-
-
-Which of the following are types available in BSON?
-Strings
-Floating-point numbers
-Arrays
-Objects
-Timestamps
-
-
-
-
 
 
 
