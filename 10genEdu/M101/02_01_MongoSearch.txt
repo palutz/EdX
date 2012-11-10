@@ -1,0 +1,78 @@
+> db.scores.find({type: "essay"}).pretty()
+{
+	"_id" : ObjectId("50996a49db8f7a6d00de144e"),
+	"student" : 0,
+	"type" : "essay",
+	"score" : 25
+}
+{
+	"_id" : ObjectId("50996a49db8f7a6d00de1451"),
+	"student" : 1,
+	"type" : "essay",
+	"score" : 74
+}
+...
+> db.scores.find({profession : {$exists: true}})
+>  (no result) // no record with that field
+
+> db.names.find({name: {$type: 2}})
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4" }
+{ "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4" }
+
+$type specify the typoe in BSON fot the field. We have to look in doc for the corrisponding number.
+# Using regex 
+> db.names.find({name: {$regex: "i"}})
+{ "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4" }
+# find all the record with the filed that finish with a
+> db.names.find({name: {$regex: "$a"}}) 
+{ "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4" }
+> 
+# find all the record with the field starting with a capital A
+> db.names.find({name: {$regex: "^S"}})
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4" }
+
+Retrieve documents from a collection where the name has a "q" in it, and the doc has an email field
+db.users.find({name : {$regex:"q"}, email: {$exists:true}})
+
+> db.names.find({$or: [{name: {$regex:"i"}},{Address:{$exists:true}}]})
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4" }
+{ "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4" }
+> 
+How would you find all documents in the scores collection where the score is less than 50 or greater than 90?
+db.scores.find({$or: [{score:{$lt:50}},{score:{$gt:90}}]})
+{ "_id" : ObjectId("50996a49db8f7a6d00de144d"), "student" : 0, "type" : "exam", "score" : 97 }
+{ "_id" : ObjectId("50996a49db8f7a6d00de144e"), "student" : 0, "type" : "essay", "score" : 25 }
+{ "_id" : ObjectId("50996a49db8f7a6d00de144f"), "student" : 0, "type" : "quiz", "score" : 45 }
+{ "_id" : ObjectId("50996a49db8f7a6d00de1450"), "student" : 1, "type" : "exam", "score" : 39 }
+{ "_id" : ObjectId("50996a49db8f7a6d00de1451"), "student" : 1, "type" : "essay", "score" : 74 }
+...
+
+query hint:
+every condition is a document -> {...}
+
+a tricky example
+db.scores.find( { score : { $gt : 50 }, score : { $lt : 60 } } );
+this query will find all documents with score less than 60 -> creating the object js first will add an instance of score with gt:50, but then this instance will be replaced by the new one lt:60. To make it working properly, we should merge in a single document or use the $and operator
+
+#querying inside arrays - mongo is able to search for a matching on a single variable like on array. We want to search in the favourite filed on the following records:
+> db.names.find()
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4", "favorites" : [ "beer", "ice-cream", "pretzels" ] }
+{ "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4", "favorites" : "beer" }
+# mongodb query works in a polymorphic way: for every doc is looking for a field called as in the query and then it will check the value, regardless is a "simple" variable or an array
+# The following query will search for all the docs with favorites equals to beer, and it will find one record with a string and one record with the value inside an array
+> db.names.find({favorites: "beer"})
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4", "favorites" : [ "beer", "ice-cream", "pretzels" ] }
+{ "_id" : ObjectId("5092a991a073f003542dd6a4"), "name" : "Vita", "surname" : "Vilde", "Address" : "Via San Grato, 4", "favorites" : "beer" }
+> 
+# querying for array.. 
+# $all operator retrieve all the docs matching the specified values inside the selected array (in any order inside the array)
+> db.names.find({favorites: {$all: ["beer", "ice-cream"]}})
+{ "_id" : ObjectId("50885eaeac293e111eeb28b6"), "name" : "Stefano", "surname" : "Paluello", "Address" : "Via San Grato, 4", "favorites" : [ "beer", "ice-cream", "pretzels" ] }
+> $in looks for all the docs that has one or another of the specified item inside the array (a or b or c or.... z)
+> db.names.find({favorites: {$in: ["beer", "pretzels"]}}) # looks for doc with favorites beer or pretzels
+# Which of the following documents matches this query?
+db.users.find( { friends : { $all : [ "Joe" , "Bob" ] }, favorites : { $in : [ "running" , "pickles" ] } } )
+No { name : "William" , friends : [ "Bob" , "Fred" ] , favorites : [ "hamburgers", "running" ] }
+No { name : "Stephen" , friends : [ "Joe" , "Pete" ] , favorites : [ "pickles", "swimming" ] }
+Yes { name : "Cliff" , friends : [ "Pete" , "Joe" , "Tom" , "Bob" ] , favorites : [ "pickles", "cycling" ] }
+No { name : "Harry" , friends : [ "Joe" , "Bob" ] , favorites : [ "hot dogs", "swimming" ] }
