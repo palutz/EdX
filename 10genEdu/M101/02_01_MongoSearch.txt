@@ -86,4 +86,9 @@ Suppose a simple e-commerce product catalog called catalog with documents that l
 Write a query that finds all products that cost more than 10,000 and that have a rating of 5 or better.
 db.catalog.find({ price: {$gt : 10000}, "reviews.rating" :{ $gte : 5} })
 
-
+#Cursor
+> cur = db.names.find(); null; #adding a null nothing will be shown
+> cur.hasNext()
+true
+> cur.next()
+> cur.limit(5); null; # limit the size of the cursor
